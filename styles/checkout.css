@@ -126,9 +126,11 @@ main{
     color: #017cb6;
     margin-left: 8px;
     margin-right: 5px;
+    cursor: pointer;
 }
 .delete-product{
     color: #017cb6;
+    cursor: pointer;
 }
 .product-delivery-option{
     padding-left: 10px;

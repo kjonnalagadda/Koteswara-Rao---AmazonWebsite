@@ -25,10 +25,24 @@
     background-color: white;
 }
 .checkout-left-section{
+    display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     width: 150px;
 }
+.checkout-amazon-logo{
+    width: 100px;
+    height: 30px;
+    margin-top: 12px;
+}
+.checkout-amazon-logo:hover{
+    border: 1px solid black;
+    border-radius: 2px;
+    padding: 9px 6px;
+    transition: border 0.15s ease;
+}
+
 .checkout-middle-section{
     flex: 1;
     align-items: center;
@@ -43,10 +57,7 @@
     width: 150px;
     text-align: right;
 }
-.checkout-amazon-logo{
-    width: 100px;
-    margin-top: 12px;
-}
+
 .items-quantity{
     color: rgb(0, 113, 133);
     font-size: 23px;

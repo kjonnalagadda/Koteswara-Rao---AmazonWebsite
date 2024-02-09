@@ -1,5 +1,8 @@
 import { cart, cart as myCart,removeFromCart } from '../data/cart.js';
 import { products } from '../data/products.js';
+import Dayjs  from 'https://unpkg.com/dayjs@1.11.10/esm/index.js';
+
+const currentDate = Dayjs();
 
 let checkoutHTML = ``;
 myCart.forEach((cartItems)=>{
@@ -12,6 +15,11 @@ myCart.forEach((cartItems)=>{
         }
     });
     console.log(matchingProduct);
+
+    const oneDayAfter = formatDeliveryDate(1);
+    const fiveDaysAfter = formatDeliveryDate(5);
+    const nindeDaysAfter = formatDeliveryDate(9);
+
 
     checkoutHTML += `
         <div class="order-summary js-cart-item-container-${matchingProduct.id}">
@@ -50,7 +58,7 @@ myCart.forEach((cartItems)=>{
                             <input type="radio" name="shippingOption-${matchingProduct.id}" id="freeShipping">
                         </div>
                         <div>
-                            <div class="week-date-info">Friday, February 16</div>
+                            <div class="week-date-info js-nine-days-shipping"> ${nindeDaysAfter} </div>
                             <div>FREE Shipping</div>
                         </div>
                     </div>
@@ -59,7 +67,7 @@ myCart.forEach((cartItems)=>{
                             <input type="radio" name="shippingOption-${matchingProduct.id}" id="withinFiveDaysShipping">
                         </div>
                         <div>
-                            <div class="week-date-info">Monday, February 12</div>
+                            <div class="week-date-info js-five-days-shipping"> ${fiveDaysAfter} </div>
                             <div>$4.99 - Shipping</div>
                         </div>
                     </div>
@@ -68,7 +76,7 @@ myCart.forEach((cartItems)=>{
                             <input type="radio" name="shippingOption-${matchingProduct.id}" id="oneDayShipping">
                         </div>
                         <div>
-                            <div class="week-date-info">Thursday, February 8</div>
+                            <div class="week-date-info js-one-day-shipping"> ${oneDayAfter} </div>
                             <div>$9.99 Shipping</div>
                         </div>
                     </div>
@@ -99,3 +107,22 @@ cart.forEach((cartItem) =>{
 });
 
 document.querySelector('.js-items-quantity').innerHTML = `(${cartQuantity} items)`;
+
+function formatDeliveryDate(days) {
+    return (cart.length > 0) ? currentDate.add(days, 'day').format('dddd MMMM D') : '';
+}
+
+
+
+
+
+// const currentDateFormat = currentDate.format('dddd MMMM D');
+
+// document.querySelector('.js-one-day-shipping').innerHTML = oneDayAfter;
+// document.querySelector('.js-five-days-shipping').innerHTML = fiveDaysAfter;
+// document.querySelector('.js-nine-days-shipping').innerHTML = nindeDaysAfter;
+
+
+// console.log(oneDayAfter);
+// console.log(fiveDaysAfter);
+// console.log(nindeDaysAfter);

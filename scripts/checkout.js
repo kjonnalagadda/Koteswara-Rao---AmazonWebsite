@@ -1,8 +1,7 @@
-import { cart, cart as myCart,removeFromCart } from '../data/cart.js';
+import { cart, cart as myCart,removeFromCart, updateDeliveryOption } from '../data/cart.js';
 import { products } from '../data/products.js';
+import { deliveryOptions } from '../data/deliveryOptions.js';
 import Dayjs  from 'https://unpkg.com/dayjs@1.11.10/esm/index.js';
-
-const currentDate = Dayjs();
 
 let checkoutHTML = ``;
 myCart.forEach((cartItems)=>{
@@ -16,15 +15,28 @@ myCart.forEach((cartItems)=>{
     });
     console.log(matchingProduct);
 
-    const oneDayAfter = formatDeliveryDate(1);
-    const fiveDaysAfter = formatDeliveryDate(5);
-    const nindeDaysAfter = formatDeliveryDate(9);
+    const deliveryOptionId = cartItems.deliveryOptionId;
+
+    let deliveryOption;
+
+    deliveryOptions.forEach((option) =>{
+        if (option.id === deliveryOptionId){
+            deliveryOption = option;
+            console.log(option, 'fddfssdfds')
+        }
+    });
+
+    const currentDate = Dayjs();
+    const deliveryDate = deliveryOption ? currentDate.add(deliveryOption.deliveryDays, 'days') : currentDate;  // Check if deliveryOption is defined
+    // const deliveryDate = currentDate.add(deliveryOption.deliveryDays, 'days');
+    const dateString = deliveryDate.format('dddd, MMMM, D');
 
 
     checkoutHTML += `
         <div class="order-summary js-cart-item-container-${matchingProduct.id}">
-            <div class="delivery-date-info">
-                Delivery date: Friday, February 16
+
+            <div class="delivery-date-info js-delivery-date-${matchingProduct.id}">
+                Delivery date: ${dateString}
             </div>
 
             <div class="product-full-order-summary">
@@ -52,38 +64,44 @@ myCart.forEach((cartItems)=>{
                 <div class="product-delivery-option">
                     <div class="delivery-option">
                         Choose a delivery option:
-                    </div>
-                    <div class="product-free-shipping">
-                        <div class="free-shipping-radio-btn">
-                            <input type="radio" name="shippingOption-${matchingProduct.id}" id="freeShipping">
-                        </div>
-                        <div>
-                            <div class="week-date-info js-nine-days-shipping"> ${nindeDaysAfter} </div>
-                            <div>FREE Shipping</div>
-                        </div>
-                    </div>
-                    <div class="product-within-fivedays-shipping">
-                        <div class="fivedays-shipping-radio-btn">
-                            <input type="radio" name="shippingOption-${matchingProduct.id}" id="withinFiveDaysShipping">
-                        </div>
-                        <div>
-                            <div class="week-date-info js-five-days-shipping"> ${fiveDaysAfter} </div>
-                            <div>$4.99 - Shipping</div>
-                        </div>
-                    </div>
-                    <div class="product-oneday-shipping">
-                        <div class="oneday-shipping-radio-btn">
-                            <input type="radio" name="shippingOption-${matchingProduct.id}" id="oneDayShipping">
-                        </div>
-                        <div>
-                            <div class="week-date-info js-one-day-shipping"> ${oneDayAfter} </div>
-                            <div>$9.99 Shipping</div>
-                        </div>
-                    </div>
+                    </div>                       
+                    
+                    ${deliveryOptionsHTML(matchingProduct, cartItems)}
+
                 </div>
             </div>
         </div>`
 });
+
+// let deliveryHTML = ``;
+function deliveryOptionsHTML(matchingProduct, cartItems){
+    let html = '';
+
+    deliveryOptions.forEach((deliveryOption) =>{
+        const currentDate = Dayjs();
+        const deliveryDate = currentDate.add(deliveryOption.deliveryDays, 'days')
+        const dateString = deliveryDate.format('dddd, MMMM, D');
+        const priceString = deliveryOption.priceCents === 0 ? 'FREE'
+        : `$${(deliveryOption.priceCents / 100).toFixed(2)} -`
+
+        const isChecked = deliveryOption.id === cartItems.deliveryOptionId;
+
+        html += `
+        <div class="product-shipping">
+            <div class="shipping-radio-btn js-delivery-option" 
+            data-product-id = "${matchingProduct.id}" data-delivery-option-id=${deliveryOption.id}>
+                <input type="radio" 
+                ${isChecked ? 'checked': ''} name="shippingOption-${matchingProduct.id}">
+            </div>
+            <div>
+                <div class="week-date-info"> ${dateString} </div>
+                <div class="price-info">${priceString} Shipping</div>
+            </div>
+        </div>`
+    });
+
+    return html;
+};
 
 
 document.querySelector('.js-checkout-order-info').innerHTML = checkoutHTML;
@@ -108,6 +126,42 @@ cart.forEach((cartItem) =>{
 
 document.querySelector('.js-items-quantity').innerHTML = `(${cartQuantity} items)`;
 
+// document.querySelectorAll('.js-delivery-option').forEach((element) =>{
+//     element.addEventListener('click', () =>{
+//         const {productId, deliveryOptionId} = element.dataset;
+//         updateDeliveryOption(productId, deliveryOptionId);
+//     })
+// })
+
+document.querySelectorAll('.js-delivery-option').forEach((element) => {
+    element.addEventListener('click', () => {
+        const { productId, deliveryOptionId } = element.dataset;
+        updateDeliveryOption(productId, deliveryOptionId);
+        updateDeliveryDate(productId);
+    });
+});
+
+function updateDeliveryDate(productId) {
+    const matchingItem = myCart.find((cartItem) => cartItem.productId === productId);
+
+    if (matchingItem) {
+        const deliveryOption = deliveryOptions.find((option) => option.id === matchingItem.deliveryOptionId);
+
+        if (deliveryOption) {
+            const currentDate = Dayjs();
+            const deliveryDate = currentDate.add(deliveryOption.deliveryDays, 'days');
+            const dateString = deliveryDate.format('dddd, MMMM D');
+
+            const deliveryDateElement = document.querySelector(`.js-delivery-date-${productId}`);
+            if (deliveryDateElement) {
+                deliveryDateElement.textContent = `Delivery date: ${dateString}`;
+            }
+        }
+    }
+}
+
+
+
 function formatDeliveryDate(days) {
     return (cart.length > 0) ? currentDate.add(days, 'day').format('dddd MMMM D') : '';
 }
@@ -126,3 +180,8 @@ function formatDeliveryDate(days) {
 // console.log(oneDayAfter);
 // console.log(fiveDaysAfter);
 // console.log(nindeDaysAfter);
+
+
+// const oneDayAfter = formatDeliveryDate(1);
+// const fiveDaysAfter = formatDeliveryDate(5);
+// const nindeDaysAfter = formatDeliveryDate(9);

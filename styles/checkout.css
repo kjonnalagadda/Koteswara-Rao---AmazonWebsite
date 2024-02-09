@@ -155,41 +155,23 @@ main{
     color: green;
     font-weight: 700;
 }
-.product-free-shipping{
+.product-shipping{
     display: flex;
     align-items: center;
     line-height: 20px;
     font-size: 15px;
     margin-bottom: 10px;
 }
-.product-within-fivedays-shipping{
-    display: flex;
-    align-items: center;
-    line-height: 20px;
+.shipping-radio-btn{
+    margin-right: 6px;
+}
+.shipping-radio-btn input{
+    width: 18px;
+    height: 18px
+}
+.price-info{
+    color: rgb(120,120,120);
     font-size: 15px;
-    margin-bottom: 10px;
-}
-.product-oneday-shipping{
-    display: flex;
-    align-items: center;
-    line-height: 20px;
-    font-size: 15px;
-    margin-bottom: 10px;
-}
-.free-shipping-radio-btn{
-    margin-right: 6px;
-}
-.fivedays-shipping-radio-btn{
-    margin-right: 6px;
-}
-.oneday-shipping-radio-btn{
-    margin-right: 6px;
-}
-.free-shipping-radio-btn input,
-.fivedays-shipping-radio-btn input,
-.oneday-shipping-radio-btn input{
-    width: 20px;
-    height: 20px
 }
 /* ##################################### */
 .payment-summary{

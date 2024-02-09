@@ -93,5 +93,9 @@ forEach((link) =>{
     });
 })
 
-const cartLength = cart.length;
-document.querySelector('.js-items-quantity').innerHTML = `(${cartLength} items)`;
+let cartQuantity = 0;
+cart.forEach((cartItem) =>{
+    cartQuantity += cartItem.quantity;
+});
+
+document.querySelector('.js-items-quantity').innerHTML = `(${cartQuantity} items)`;

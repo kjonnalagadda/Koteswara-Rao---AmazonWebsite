@@ -92,3 +92,6 @@ forEach((link) =>{
         removeContainer.remove();
     });
 })
+
+const cartLength = cart.length;
+document.querySelector('.js-items-quantity').innerHTML = `(${cartLength} items)`;
